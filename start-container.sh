@@ -13,8 +13,8 @@ sudo docker run -itd \
 		-p 9000:9000 \
                 -p 9001:9001 \
                 --name hadoop-master \
-                --hostname hadoop-master \
-                kiwenlau/hadoop:1.0 &> /dev/null
+                --hostname hive-hadoop-master \
+                lenny/hive:1.0 &> /dev/null
 
 
 # start hadoop slave container
@@ -27,7 +27,7 @@ do
 	                --net=hadoop \
 	                --name hadoop-slave$i \
 	                --hostname hadoop-slave$i \
-	                kiwenlau/hadoop:1.0 &> /dev/null
+	                lenny/hive:1.0  &> /dev/null
 	i=$(( $i + 1 ))
 done 
 
