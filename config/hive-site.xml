@@ -36,7 +36,7 @@
   </property>
   <property>
     <name>hive.exec.scratchdir</name>
-    <value>/user/hive/tmp</value>
+    <value>/tmp/hive</value>
     <description>HDFS root scratch dir for Hive jobs which gets created with write all (733) permission. For each connecting user, an HDFS scratch dir: ${hive.exec.scratchdir}/&lt;username&gt; is created, with ${hive.scratch.dir.permission}.</description>
   </property>
   <property>
@@ -72,7 +72,7 @@
   </property>
   <property>
     <name>hive.exec.local.scratchdir</name>
-    <value> /home/hadoop/hive/tmp//${user.name}</value>
+    <value>${system:java.io.tmpdir}/${system:user.name}</value>
     <description>Local scratch space for Hive jobs</description>
   </property>
   <property>
@@ -541,8 +541,8 @@
     <description>Set this to true if multiple threads access metastore through JDO concurrently.</description>
   </property>
   <property>
-    <name>jdbc:mysql://172.18.0.5:3306/metastore?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;useSSL=false</name>
-    <value>jdbc:derby:;databaseName=metastore_db;create=true</value>
+    <name>javax.jdo.option.ConnectionURL</name>
+    <value>jdbc:mysql://172.19.0.5:3306/metastore?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;useSSL=false&amp;autoReconnect=true</value>
     <description>
       JDBC connect string for a JDBC metastore.
       To use SSL to encrypt/authenticate the connection, provide database-specific SSL flag in the connection URL.
@@ -1682,7 +1682,7 @@
   </property>
   <property>
     <name>hive.querylog.location</name>
-    <value>/user/hive/log</value>
+    <value>${system:java.io.tmpdir}/${system:user.name}</value>
     <description>Location of Hive run time structured log file</description>
   </property>
   <property>
