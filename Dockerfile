@@ -1,3 +1,4 @@
+#此image在https://github.com/lennyhuanga/hadoopwithdocker
 FROM lenny/hadoop:2.7.2
 
 MAINTAINER lennyhuang <524180539@qq.com>
