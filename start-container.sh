@@ -12,8 +12,8 @@ sudo docker run -itd \
                 -p 8088:8088 \
 		-p 9000:9000 \
                 -p 9001:9001 \
-                --name hadoop-master \
-                --hostname hive-hadoop-master \
+                --name hive-hadoop-master \
+                --hostname hadoop-master \
                 lenny/hive:1.0 &> /dev/null
 
 
@@ -32,4 +32,4 @@ do
 done 
 
 # get into hadoop master container
-sudo docker exec -it hive-master bash
+sudo docker exec -it hive-hadoop-master bash
