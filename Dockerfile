@@ -29,10 +29,10 @@ RUN mv /tmp/hive-env.sh $HIVE_HOME/conf/hive-site.sh && \
     mv /tmp/hive-exec-log4j2.properties $HIVE_HOME/conf/hive-exec-log4j2.properties && \ 
 	mv /tmp/mysql-connector-java-5.1.41-bin.jar $HIVE_HOME/lib/mysql-connector-java-5.1.41-bin.jar 
 
-#初始化hive
-RUN schematool -dbType mysql -initSchema
+#初始化hive 会报错，在容器启动完成后再去执行。
+#RUN schematool -dbType mysql -initSchema
 
 # 启动hive
-RUN hive
+#RUN hive
 
 CMD [ "sh", "-c", "service ssh start; bash"]
