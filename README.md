@@ -30,6 +30,12 @@ docker tag registry.cn-hangzhou.aliyuncs.com/acs-sample/mysql:5.7 mysql:5.7
 7、初始化hive的数据源为mysql 
   schematool -dbType mysql -initSchema
 8、hive 命令 启动hive
+9、sqoop 相关操作参见
+https://www.cnblogs.com/guguli/p/4998190.html
+https://segmentfault.com/a/1190000002532293#articleHeader8
+sqoop 从mysql 往hive同步数据
+sqoop import -Dorg.apache.sqoop.splitter.allow_text_splitter=true --connect jdbc:mysql://172.19.0.5:3306/testdb --username root --password 123456 --table testtable --fields-terminated-by "\t" --lines-terminated-by "\n" --hive-import --hive-overwrite --create-hive-table --hive-table hivedb.testtable --delete-target-dir
+
 
 常见错误大全：
 1、hive 启动时报 Relative path in absolute URI: ${system:java.io.tmpdir%7D/$%7Bhive.session.id%7D_resources
@@ -39,5 +45,45 @@ docker tag registry.cn-hangzhou.aliyuncs.com/acs-sample/mysql:5.7 mysql:5.7
 2、schematool -dbType mysql -initSchema 初始化数据源时
 Error: Duplicate key name 'PCS_STATS_IDX' (state=42000,code=1061) ----Hive schematool -initSchema
 以上错误查看mysql是否已经创建了hive这个表, 如果创建，你想从新安装的话，把那个你创建的表删了即可
+3、在执行sqoop从oracle导出数据到hive时报错：No columns to generate for ClassWriter
+问题原因：oracle数据库的IP/用户名/密码/数据库名称 错误导致连接不上。
+4、 Generating splits for a textual index column allowed only in case of "-Dorg.apache.sqoop.splitter.allow_text_splitter=true" property passed as a parameter
+解决：
+先加上下面参数-Dorg.apache.sqoop.splitter.allow_text_splitter=true，并且如果是hive，需要有分隔符
+sqoop import -Dorg.apache.sqoop.splitter.allow_text_splitter=true --connect jdbc:mysql://10.20.30.105/appbase  
+如：
+sqoop import -Dorg.apache.sqoop.splitter.allow_text_splitter=true --connect jdbc:mysql://172.19.0.5:3306/testdb --username root --password 123456 --table testtable --fields-terminated-by "\t" --lines-terminated-by "\n" --hive-import --hive-overwrite --create-hive-table --hive-table hivedb.testtable --delete-target-dir
+5、Sqoop导入mysql表中的数据到hive，出现如下错误： 
 
+ ERROR hive.HiveConfig: Could not load org.apache.hadoop.hive.conf.HiveConf. Make sure HIVE_CONF_DIR is set correctly.
+命令如下：
+./sqoop import --connect jdbc:mysql://slave2:3306/mysql --username root --password aaa --table people --hive-import --hive-overwrite --hive-table people --fields-terminated-by '\t';
+ 解决方法：
+
+往/etc/profile最后加入 export HADOOP_CLASSPATH=$HADOOP_CLASSPATH:$HIVE_HOME/lib/*
+然后刷新配置，source /etc/profile
+
+
+6、ERROR Could not register mbeans java.security.AccessControlException: access denied ... 
+ 解决方案：https://blog.csdn.net/weixin_39445556/article/details/80802459
+ 将hive-site.xml复制到${SQOOP_HOME}/conf下即可.
+ 方法二：
+ 解决方法：
+
+Just add the following lines to your java.policy file unter <JRE_HOME>/lib/security.
+grant {
+　　permission javax.management.MBeanTrustPermission "register";
+};
+
+7、ERROR exec.DDLTask: java.lang.NoSuchMethodError: com.fasterxml.jackson.databind.ObjectMapper.readerFor(Ljava/lang/Class;)Lcom/fasterxml/jackson/databind/ObjectReader;
+--------------------- 
+作者：zhangbcn 
+来源：CSDN 
+原文：https://blog.csdn.net/zhangbcn/article/details/83014437 
+版权声明：本文为博主原创文章，转载请附上博文链接！
+
+把$SQOOP_HOME/lib/jackson*.jar 文件bak, 把对应的$HIVE_HOME/lib/jackson*.jar 对应拷贝到SQOOP/lib 下. 
+
+8、sqoop mysql 导入到hive常见错误：
+http://www.mamicode.com/info-detail-2457770.html
 
